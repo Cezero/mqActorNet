@@ -37,3 +37,18 @@ Will execute on all characters on the Actor network (see https://docs.macroquest
 /anrexecute /command
 /anraexecute /command - Includes character sending the command
 ```
+
+## LUA API
+You can also use this from other lua scripts:
+```lua
+local rexec = require('mqActorNet.rexec')
+rexec.sendDirectCommand(characterName, command) - Executes a command on a specific character
+rexec.sendGlobalCommand(command) - Executes a command on all characters on the Actor network
+rexec.sendSelfAndGlobalCommand(command) - Executes a command on all characters on the Actor network and the character sending the command
+rexec.sendZoneCommand(command) - Executes a command on all characters in the zone on the Actor network
+rexec.sendSelfAndZoneCommand(command) - Executes a command on all characters in the zone on the Actor network and the character sending the command
+rexec.sendGroupCommand(command) - Executes a command on all characters in the group on the Actor network
+rexec.sendSelfAndGroupCommand(command) - Executes a command on all characters in the group on the Actor network and the character sending the command
+rexec.sendRaidCommand(command) - Executes a command on all characters in the raid on the Actor network
+rexec.sendSelfAndRaidCommand(command) - Executes a command on all characters in the raid on the Actor network and the character sending the command
+```
