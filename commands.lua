@@ -2,7 +2,7 @@ local registry = require('mqActorNet.command_registry')
 local state = require('mqActorNet.state')
 local rexec = require('mqActorNet.rexec')
 
-registry.bind('/anstop', state.stop)
+registry.bind('/anquit', state.stop)
 registry.bind('/anexecute', rexec.sendDirectCommand)
 registry.bind('/anaexecute', rexec.sendGlobalCommand)
 registry.bind('/anaaexecute', rexec.sendSelfAndGlobalCommand)
