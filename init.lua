@@ -8,8 +8,7 @@ end
 
 -- message handler for remote commands
 local cmdActor = actors.register('rexec', function (message)
-    if message.content.id == 'direct' then
-        printf("Recieved direct command from %s", message.content.sender)
+    if message.content.id == 'direct' or (message.content.id == 'global' and mq.TLO.Me.Name() ~= message.content.sender) then
         execCommand(message.content.command)
     elseif message.content.id == 'zone' and mq.TLO.Zone.ShortName() == message.content.zone then
         execCommand(message.content.command)
@@ -47,7 +46,8 @@ local function sendCommand(includeSelf, target, ...)
     local targets = {
         zone = true,
         group = true,
-        raid = true
+        raid = true,
+        global = true
     }
     local cmd = concat(...)
     if includeSelf then
@@ -60,6 +60,14 @@ local function sendCommand(includeSelf, target, ...)
     end
 end
 
+local sendGlobalCommand = function (...)
+    sendCommand(false, 'global', ...)
+end
+
+local sendSelftAndGlobalCommand = function (...)
+    sendCommand(true, 'global', ...)
+end
+
 local sendDirectCommand = function (target, ...)
     sendCommand(false, target, ...)
 end
@@ -68,20 +76,20 @@ local sendZoneCommand = function (...)
     sendCommand(false, 'zone', ...)
 end
 
-local sendGroupCommand = function (...)
-    sendCommand(false, 'group', ...)
-end
-
-local sendRaidCommand = function (...)
-    sendCommand(false, 'raid', ...)
-end
-
 local sendSelfAndZoneCommand = function (...)
     sendCommand(true, 'zone', ...)
 end
 
+local sendGroupCommand = function (...)
+    sendCommand(false, 'group', ...)
+end
+
 local sendSelfAndGroupCommand = function (...)
     sendCommand(true, 'group', ...)
+end
+
+local sendRaidCommand = function (...)
+    sendCommand(false, 'raid', ...)
 end
 
 local sendSelfAndRaidCommand = function (...)
@@ -91,6 +99,8 @@ end
 local runscript = true
 mq.bind('/anquit', function () runscript = false end)
 mq.bind('/anexecute', sendDirectCommand)
+mq.bind('/anaexecute', sendGlobalCommand)
+mq.bind('/anaaexecute', sendSelftAndGlobalCommand)
 mq.bind('/anzaexecute', sendSelfAndZoneCommand)
 mq.bind('/anzexecute', sendZoneCommand)
 mq.bind('/angaexecute', sendSelfAndGroupCommand)
