@@ -43,35 +43,49 @@ local function concat(...)
     return table.concat(parts, ' ')
 end
 
+local function sendCommand(includeSelf, target, ...)
+    local targets = {
+        zone = true,
+        group = true,
+        raid = true
+    }
+    local cmd = concat(...)
+    if includeSelf then
+        execCommand(cmd)
+    end
+    if not targets[target] then
+        cmdActor:send({character=target, mailbox='rexec'}, {sender = mq.TLO.Me.Name(), id = 'direct', command = cmd})
+    else
+        cmdActor:send({mailbox='rexec'}, {sender = mq.TLO.Me.Name(), id = target, command = cmd, zone = mq.TLO.Zone.ShortName()})
+    end
+end
+
 local sendDirectCommand = function (target, ...)
-    cmdActor:send({character=target, mailbox='rexec'}, {sender = mq.TLO.Me.Name(), id = 'direct', command = concat(...)})
+    sendCommand(false, target, ...)
 end
 
 local sendZoneCommand = function (...)
-    cmdActor:send({mailbox='rexec'}, {sender = mq.TLO.Me.Name(), id = 'zone', command = concat(...), zone = mq.TLO.Zone.ShortName()})
+    sendCommand(false, 'zone', ...)
 end
 
 local sendGroupCommand = function (...)
-    cmdActor:send({mailbox='rexec'}, {sender = mq.TLO.Me.Name(), id = 'group', command = concat(...)})
+    sendCommand(false, 'group', ...)
 end
 
 local sendRaidCommand = function (...)
-    cmdActor:send({mailbox='rexec'}, {sender = mq.TLO.Me.Name(), id = 'raid', command = concat(...)})
+    sendCommand(false, 'raid', ...)
 end
 
 local sendSelfAndZoneCommand = function (...)
-    execCommand(concat(...))
-    sendZoneCommand(...)
+    sendCommand(true, 'zone', ...)
 end
 
 local sendSelfAndGroupCommand = function (...)
-    execCommand(concat(...))
-    sendGroupCommand(...)
+    sendCommand(true, 'group', ...)
 end
 
 local sendSelfAndRaidCommand = function (...)
-    execCommand(concat(...))
-    sendRaidCommand(...)
+    sendCommand(true, 'raid', ...)
 end
 
 local runscript = true
