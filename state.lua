@@ -1,5 +1,6 @@
 _G.mqActorNetState = _G.mqActorNetState or {
     runscript = true,
+    Peers = {}
 }
 
 local State = _G.mqActorNetState
