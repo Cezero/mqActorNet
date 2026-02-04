@@ -109,5 +109,5 @@ mq.bind('/anraexecute', sendSelfAndRaidCommand)
 mq.bind('/anrexecute', sendRaidCommand)
 
 while runscript do
-    mq.delay(1000)
+    mq.delay(100)
 end
